@@ -1,11 +1,10 @@
 import asyncio
-from aiogram import Bot, Dispatcher
 from hendlers.reg_user import reg_router
 from hendlers.search_form import search_router
-from config import BOT_API
+from dispatcher import dp,bot
+
 async def main():
-    bot = Bot(token=BOT_API)
-    dp = Dispatcher()
+    
     dp.include_routers(search_router,reg_router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

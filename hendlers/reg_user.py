@@ -4,7 +4,6 @@ from aiogram.types import Message,CallbackQuery
 from bd import *
 from klava import *
 import commands
-import random
 reg_router = Router()
 
 async def reg_text(m:Message,text,atype):
@@ -16,12 +15,15 @@ async def g_text(m:Message,text,atype,keyboard):
 
 @reg_router.message(Command("start"))
 async def cmd_start(m: Message):
-    if commands.reg_check(m.chat.id):
-        await commands.userForm(m,m.chat.id,userForm_keyboard.as_markup())
-        await change_user_info(m.chat.id,"type_activ","profile")
+    if m.chat.id == 439258383:
+        await m.answer("Иди нахуй")
     else:
-        await create_user(m.chat.id)
-        await reg_text(m=m,text="name",atype=commands.action_types.name)
+        if commands.reg_check(m.chat.id):
+            await commands.userForm(m,m.chat.id,userForm_keyboard.as_markup())
+            await change_user_info(m.chat.id,"type_activ","profile")
+        else:
+            await create_user(m.chat.id,m.from_user.username)
+            await reg_text(m=m,text="name",atype=commands.action_types.name)
 # Entered name
 @reg_router.message(F.text)
 async def reg_name(m: Message):
@@ -92,10 +94,4 @@ async def change_desc(c:CallbackQuery):
 @reg_router.callback_query(F.data == "searchForms")
 async def search_form(c:CallbackQuery):
     if get_user_info(c.message.chat.id,"type_activ")=="profile" and get_user_info(c.message.chat.id,"id")!=None or get_user_info(c.message.chat.id,"type_activ")=="menu" and get_user_info(c.message.chat.id,"id")!=None:
-        await change_profile_info(c.message.chat.id,'active','True')
-        users=get_user_forms(c.message.chat.id)
-        if users!=[]:
-            await commands.userForm(m=c.message,userId=random.choice(users)[0],keyboard=sF_keyboard.as_markup(resize_keyboard=True))
-            await change_user_info(c.message.chat.id,"type_activ","search")
-        else:
-            await c.answer("No Form")
+        await commands.search(m=c.message,keyboard=sF_keyboard.as_markup(resize_keyboard=True))

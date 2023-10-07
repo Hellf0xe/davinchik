@@ -27,9 +27,19 @@ sF_keyboard.add(like_key,dislike_key,menu_key)
 
 def menu_keyboard(userId):
     buttons = [
-        [InlineKeyboardButton(text=" Моя анкета",callback_data="mProfile")],
+        [InlineKeyboardButton(text="Моя анкета",callback_data="mProfile")],
         [InlineKeyboardButton(text=f"Скрити анкету {'❌'if get_profile_info(userId,'active')=='True'else'✅'}",callback_data="mProfileOff")],
         [searchForms]
+    ]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    return keyboard
+
+ac_fr_keyboard=InlineKeyboardBuilder()
+
+def ac_fr_keyboard(userId):
+    buttons = [
+        [InlineKeyboardButton(text="👍",callback_data="searchForms"),
+         InlineKeyboardButton(text=f"Скрити анкету {'❌'if get_profile_info(userId,'active')=='True'else'✅'}",callback_data="mProfileOff")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
