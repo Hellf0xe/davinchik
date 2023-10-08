@@ -7,7 +7,7 @@ import commands
 reg_router = Router()
 
 async def reg_text(m:Message,text,atype):
-    await m.answer(f"Enter {text}")
+    await m.answer("Як до тебе звертатись?")
     await change_user_info(m.chat.id,'type_activ',atype)
 async def g_text(m:Message,text,atype,keyboard):
     await m.answer(f"Enter {text}",reply_markup=keyboard)
@@ -23,44 +23,53 @@ async def cmd_start(m: Message):
             await change_user_info(m.chat.id,"type_activ","profile")
         else:
             await create_user(m.chat.id,m.from_user.username)
-            await reg_text(m=m,text="name",atype=commands.action_types.name)
+            await m.answer("Як до тебе звертатись?")
+            await change_user_info(m.chat.id,'type_activ',commands.action_types.name)
 # Entered name
 @reg_router.message(F.text)
 async def reg_name(m: Message):
     match get_user_info(m.chat.id,"type_activ"):
         case commands.action_types.name:
             await change_profile_info(m.chat.id,'name',m.text)
-            await g_text(m=m,text="gender",atype=commands.action_types.gender,keyboard=choice_gender_keyboard.as_markup(resize_keyboard=True))
+            await m.answer("Тепер обери стать👩‍❤️‍💋‍👨",reply_markup=choice_gender_keyboard.as_markup(resize_keyboard=True))
+            await change_user_info(m.chat.id,'type_activ',commands.action_types.gender)
         case commands.action_types.gender:
-            if m.text == "I am Woman" or m.text == "I am Man":
-                gen="Woman" if m.text=="I am Woman" else "Man"
+            if m.text == "Я дівчина" or m.text == "Я хлопець":
+                gen="Woman" if m.text=="Я дівчина" else "Man"
                 await change_profile_info(m.chat.id,'gender',gen)
-                await g_text(m=m,text="search gender",atype=commands.action_types.searchGender,keyboard=sG_keyboard.as_markup(resize_keyboard=True))
+                await m.answer("Хто тебе цікавить?🤩",reply_markup=sG_keyboard.as_markup(resize_keyboard=True))
+                await change_user_info(m.chat.id,'type_activ',commands.action_types.searchGender)
             else:
                 await m.answer("ERROR")
         case commands.action_types.searchGender:
-            if m.text == "Woman" or m.text == "Man" or m.text == "Any":
-                await change_profile_info(m.chat.id,'search_gender',m.text)
-                await g_text(m=m,text="age",atype=commands.action_types.age,keyboard=ReplyKeyboardRemove())
+            if m.text == "Дівчата" or m.text == "Хлопці" or m.text == "Все одно":
+                gen="Woman" if m.text=="Дівчата" else "Man" if m.text=="Хлопці" else "Any"
+                await change_profile_info(m.chat.id,'search_gender',gen)
+                await m.answer("Скільки тобі років?🔞",reply_markup=ReplyKeyboardRemove())
+                await change_user_info(m.chat.id,'type_activ',commands.action_types.age)
             else:
                 await m.answer("ERROR")
         case commands.action_types.age:
             if m.text.isdigit() and int(m.text)<100:
                 await change_profile_info(m.chat.id,'age',m.text)
-                await reg_text(m=m,text="speciality",atype=commands.action_types.speciality)
+                await m.answer("Яка в тебе спеціальність? (приклад - 123)")
+                await change_user_info(m.chat.id,'type_activ',commands.action_types.speciality)
             else:
                 await m.answer("ERROR")
         case commands.action_types.speciality:
             if m.text in commands.speciality_list:
                 await change_profile_info(m.chat.id,'speciality',m.text)
-                await reg_text(m=m,text="description",atype=commands.action_types.description)
+                await m.answer("Розкажи про себе, кого хочеш знайти, чим пропонуєш зайнятись.\nЦе допоможе краще підібрати тобі компанію🫂")
+                await change_user_info(m.chat.id,'type_activ',commands.action_types.description)
             else:
                 await m.answer("ERROR")
         case commands.action_types.description:
             await change_profile_info(m.chat.id,'description',m.text)
-            await reg_text(m=m,text="photo",atype=commands.action_types.photoUser)
+            await m.answer("Тепер надійшли фото, його побачать інші користувачі📸")
+            await change_user_info(m.chat.id,'type_activ',commands.action_types.photoUser)
         case commands.action_types.changeDescription:
             await change_profile_info(m.chat.id,'description',m.text)
+            await change_user_info(m.chat.id,'type_activ',"profile")
             await commands.userForm(m,m.chat.id,userForm_keyboard.as_markup())
 
 
@@ -89,7 +98,8 @@ async def change_photo(c:CallbackQuery):
 @reg_router.callback_query(F.data == "changeDesc")
 async def change_desc(c:CallbackQuery):
     if get_user_info(c.message.chat.id,"type_activ")=="profile" and get_user_info(c.message.chat.id,"id")!=None:
-        await reg_text(m=c.message,text="description",atype=commands.action_types.changeDescription)
+        await c.message.answer("Розкажи про себе, кого хочеш знайти, чим пропонуєш зайнятись.\nЦе допоможе краще підібрати тобі компанію🫂")
+        await change_user_info(c.message.chat.id,'type_activ',commands.action_types.changeDescription)
 
 @reg_router.callback_query(F.data == "searchForms")
 async def search_form(c:CallbackQuery):

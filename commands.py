@@ -24,7 +24,7 @@ class action_types:
 with open("./data/specialties.json", "r", encoding="UTF-8") as f:
     speciality_list = json.load(f)
 
-user_form="{name},{age},{speciality} - {description}"
+user_form="{name}, {age}, {speciality} - {description}"
 
 
 async def userForm(m:Message,userId,keyboard):
@@ -45,6 +45,6 @@ async def search(m:Message,keyboard):
         await userForm(m=m,userId=userId,keyboard=keyboard)
         await change_user_info(m.chat.id,"type_activ","search")
     else:
-        mess=await m.answer("No Form")
+        mess=await m.answer("Немає належних анкет:(")
         time.sleep(2)
         await mess.delete()

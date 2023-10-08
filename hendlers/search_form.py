@@ -20,7 +20,7 @@ async def dislike_form(m:Message):
 async def menu(m:Message):
 	if get_user_info(m.chat.id,"type_activ")=="search" and get_user_info(m.chat.id,"id")!=None:
 		await m.answer("Почекаємо поки хтось побачить твою анкету",reply_markup=ReplyKeyboardRemove())
-		await m.answer("----------------Навігація----------------",reply_markup=menu_keyboard(m.chat.id))
+		await m.answer("➖➖📜Меню📜➖➖",reply_markup=menu_keyboard(m.chat.id))
 		await change_user_info(m.chat.id,"type_activ","menu")
 
 @search_router.callback_query(F.data == "mProfile")
@@ -35,14 +35,15 @@ async def off_profile(c:CallbackQuery):
 			await change_profile_info(c.message.chat.id,'active','False')
 		else:
 			await change_profile_info(c.message.chat.id,'active','True')
-		await c.message.edit_text("----------------Навігація----------------",reply_markup=menu_keyboard(c.message.chat.id))
+		await c.message.edit_text("➖➖📜Меню📜➖➖",reply_markup=menu_keyboard(c.message.chat.id))
 
 @search_router.message(F.text=="❤️")
 async def dislike_form(m:Message):
 	if get_user_info(m.chat.id,"type_activ")=="search" and get_user_info(m.chat.id,"id")!=None:
 		if get_liked_form(get_user_info(m.chat.id,'current_ac'),m.chat.id)!=None:
-			await bot.send_message(chat_id=get_user_info(m.chat.id,'current_ac'),text=f"@{get_user_info(m.chat.id,'nick')}")
-			await m.answer(f"@{get_user_info(get_user_info(m.chat.id,'current_ac'),'nick')}")
+			await bot.send_message(chat_id=get_user_info(m.chat.id,'current_ac'),text=f"Є взаємна симпатія! Починай спілкуватися @{get_user_info(m.chat.id,'nick')}")
+			await m.answer(f"Супер! Сподіваюсь, гарно проведете час ;) Починай спілкуватися @{get_user_info(get_user_info(m.chat.id,'current_ac'),'nick')}")
+			await delete_liked(get_user_info(m.chat.id,'current_ac'))
 		else:
 			if get_liked_form(m.chat.id,get_user_info(m.chat.id,'current_ac'))==None:
 				await add_liked_form(m.chat.id)

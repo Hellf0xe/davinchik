@@ -2,21 +2,21 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder,ReplyKeyboardBuilder
 from aiogram.types import InlineKeyboardButton,KeyboardButton,ReplyKeyboardRemove,InlineKeyboardMarkup
 from bd import *
 userForm_keyboard=InlineKeyboardBuilder()
-resetForm=InlineKeyboardButton(text="Reset form",callback_data="resetForm")
-changePhoto=InlineKeyboardButton(text="Change photo",callback_data="changePhoto")
-changeDesc=InlineKeyboardButton(text="Change description",callback_data="changeDesc")
+resetForm=InlineKeyboardButton(text="Заповнити анкету заново",callback_data="resetForm")
+changePhoto=InlineKeyboardButton(text="Змінити фото",callback_data="changePhoto")
+changeDesc=InlineKeyboardButton(text="Змінити текст анкети",callback_data="changeDesc")
 searchForms=InlineKeyboardButton(text="Дивитися анкети",callback_data="searchForms")
 userForm_keyboard.row(resetForm).row(changePhoto).row(changeDesc).row(searchForms)
 
 choice_gender_keyboard=ReplyKeyboardBuilder()
-gender_W=KeyboardButton(text="I am Woman")
-gender_M=KeyboardButton(text="I am Man")
+gender_W=KeyboardButton(text="Я дівчина")
+gender_M=KeyboardButton(text="Я хлопець")
 choice_gender_keyboard.add(gender_W,gender_M)
 
 sG_keyboard=ReplyKeyboardBuilder()
-search_W=KeyboardButton(text="Woman")
-search_M=KeyboardButton(text="Man")
-search_A=KeyboardButton(text="Any")
+search_W=KeyboardButton(text="Дівчата")
+search_M=KeyboardButton(text="Хлопці")
+search_A=KeyboardButton(text="Все одно")
 sG_keyboard.add(search_W,search_M,search_A)
 
 sF_keyboard=ReplyKeyboardBuilder()
@@ -38,8 +38,7 @@ ac_fr_keyboard=InlineKeyboardBuilder()
 
 def ac_fr_keyboard(userId):
     buttons = [
-        [InlineKeyboardButton(text="👍",callback_data="searchForms"),
-         InlineKeyboardButton(text=f"Скрити анкету {'❌'if get_profile_info(userId,'active')=='True'else'✅'}",callback_data="mProfileOff")]
+        [InlineKeyboardButton(text="👍",callback_data="searchForms")]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
