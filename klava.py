@@ -35,10 +35,7 @@ def menu_keyboard(userId):
     return keyboard
 
 ac_fr_keyboard=InlineKeyboardBuilder()
+ac_fr_keyboard.add(InlineKeyboardButton(text="👍",callback_data="searchForms"))
 
-def ac_fr_keyboard(userId):
-    buttons = [
-        [InlineKeyboardButton(text="👍",callback_data="searchForms")]
-    ]
-    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
-    return keyboard
+сont_search_keyboard=InlineKeyboardBuilder()
+сont_search_keyboard.add(InlineKeyboardButton(text="Продовжити пошук",callback_data="searchForms"))
