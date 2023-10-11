@@ -7,7 +7,7 @@ cur = db.cursor()
 
 async def create_user(user_id,nick):
     cur.execute(f"INSERT INTO user_info VALUES(?,'none',0,'{nick}')",(user_id,))
-    cur.execute("INSERT INTO profile VALUES(?,'none',0,'none','none','none','none','none','True')",(user_id,))
+    cur.execute("INSERT INTO profile VALUES(?,'none',0,'none','none','none','none','none','True',0,0)",(user_id,))
     db.commit()
 
 # User Info bd
