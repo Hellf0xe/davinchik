@@ -28,15 +28,6 @@ async def profile(c:CallbackQuery):
 	if get_user_info(c.message.chat.id,"type_activ")=="menu" and get_user_info(c.message.chat.id,"id")!=None:
 		await cmd_start(m=c.message)
 
-@search_router.callback_query(F.data == "mProfileOff")
-async def off_profile(c:CallbackQuery):
-	if get_user_info(c.message.chat.id,"type_activ")=="menu" and get_user_info(c.message.chat.id,"id")!=None:
-		if get_profile_info(c.message.chat.id,'active')=='True':
-			await change_profile_info(c.message.chat.id,'active','False')
-		else:
-			await change_profile_info(c.message.chat.id,'active','True')
-		await c.message.edit_text("➖➖📜Меню📜➖➖",reply_markup=menu_keyboard(c.message.chat.id))
-
 @search_router.message(F.text=="❤️")
 async def dislike_form(m:Message):
 	if get_user_info(m.chat.id,"type_activ")=="search" and get_user_info(m.chat.id,"id")!=None:

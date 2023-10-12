@@ -17,11 +17,11 @@ def profile_keyboard(userId):
     ]
     menuSearch_buttons = [
         [InlineKeyboardButton(text=f"Cтать:{'Дівчата' if get_profile_info(userId,'search_gender')=='Woman' else 'Хлопці' if get_profile_info(userId,'search_gender')=='Man' else 'Все одно'}",callback_data="changeSearchGen")],
-        [InlineKeyboardButton(text="Діапозон віку",callback_data="changeDiap")],
+        [InlineKeyboardButton(text="Діапазон віку",callback_data="infoDiap")],
         [
-            InlineKeyboardButton(text=f"{get_profile_info(userId,'min_age')}",callback_data="changeDiap"),
+            InlineKeyboardButton(text=f"{get_profile_info(userId,'min_age')}",callback_data="changeMinAge"),
             InlineKeyboardButton(text="-",callback_data="changeDiap"),
-            InlineKeyboardButton(text=f"{get_profile_info(userId,'max_age')}",callback_data="changeDiap")
+            InlineKeyboardButton(text=f"{get_profile_info(userId,'max_age')}",callback_data="changeMaxAge")
         ],
         [InlineKeyboardButton(text="Назад◀️", callback_data="backToProfile")]
     ]
