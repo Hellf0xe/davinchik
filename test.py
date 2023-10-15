@@ -1,7 +1,14 @@
-while(True):
-	text=input("Enter: ")
-	if len(text)==5 and text[2]=="-" and text[:2].isdigit() and text[3:].isdigit() and int(text[:2])>=17 and int(text[3:])<=30:
-		print("true")
-	else:
-		print("false")
-	
+import asyncio
+
+async def timer(delay: float):
+    await asyncio.sleep(delay)
+    print(f"1")
+    await timer(1)
+
+async def main():
+    task = asyncio.create_task(timer(1))
+    await task
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
