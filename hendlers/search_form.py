@@ -1,5 +1,4 @@
-from aiogram.filters.command import Command
-from aiogram import F,Router,Bot
+from aiogram import F,Router
 from aiogram.types import Message,CallbackQuery
 from bd import *
 from klava import *
@@ -13,7 +12,7 @@ search_router=Router()
 async def dislike_form(m:Message):
 	if get_user_info(m.chat.id,"type_activ")=="search" and get_user_info(m.chat.id,"id")!=None:
 		if get_liked_form(get_user_info(m.chat.id,'current_ac'),m.chat.id)!=None:
-			await delete_liked(get_user_info(m.chat.id,'current_ac'))
+			await delete_liked(m.chat.id,get_user_info(m.chat.id,'current_ac'))
 		await commands.search(m=m,keyboard=sF_keyboard.as_markup(resize_keyboard=True))
 
 @search_router.message(F.text=="💤")
@@ -44,7 +43,7 @@ async def dislike_form(m:Message):
 			await m.answer(f"Супер! Сподіваюсь, гарно проведете час ;) Починай спілкуватися @{get_user_info(get_user_info(m.chat.id,'current_ac'),'nick')}",reply_markup=сont_search_keyboard.as_markup())
 			await change_user_info(cur_u,'type_activ','menu')
 			await change_user_info(m.chat.id,'type_activ','menu')
-			await delete_liked(get_user_info(m.chat.id,'current_ac'))
+			await delete_liked(m.chat.id,get_user_info(m.chat.id,'current_ac'))
 		else:
 			if get_liked_form(m.chat.id,get_user_info(m.chat.id,'current_ac'))==None:
 				await add_liked_form(m.chat.id)

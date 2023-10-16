@@ -72,6 +72,7 @@ async def reg_name(m: Message):
             if len(text)==5 and text[2]=="-" and text[:2].isdigit() and text[3:].isdigit() and int(text[:2])>=17 and int(text[3:])<=30:
                 await change_profile_info(m.chat.id,'min_age',text[:2])
                 await change_profile_info(m.chat.id,'max_age',text[3:])
+                await change_user_info(m.chat.id,'type_activ','profile')
                 await commands.userForm(m,m.chat.id,profile_keyboard(m.chat.id))
             else:
                 await m.answer("ERROR")

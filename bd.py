@@ -6,7 +6,7 @@ db = sq.connect('./data/bot.db')
 cur = db.cursor()
 
 async def create_user(user_id,nick):
-    cur.execute(f"INSERT INTO user_info VALUES(?,'none',0,'{nick}')",(user_id,))
+    cur.execute(f"INSERT INTO user_info VALUES(?,'none',0,'{nick}',0,'False')",(user_id,))
     cur.execute("INSERT INTO profile VALUES(?,'none',0,'none','none','none','none','none','True',0,0)",(user_id,))
     db.commit()
 
@@ -28,6 +28,8 @@ async def change_user_info(user_id, name_info, value):
     cur.execute(f"UPDATE user_info SET {name_info} = ? WHERE id = ?", (value,user_id))
     db.commit()
 
+def get_user_timer():
+    return cur.execute("SELECT id FROM user_info WHERE start_timer = 'True'").fetchall()
 # Profile Info bd
 
 
@@ -65,5 +67,14 @@ def get_liked_form(userId,liked_user):
         return cur.execute("SELECT * FROM liked_form WHERE id=? AND liked_user=?",(liked_user,userId)).fetchone()
     else:
         return cur.execute(f"SELECT * FROM liked_form WHERE id=?", (liked_user,)).fetchall()
-async def delete_liked(userId):
-    cur.execute(f"DELETE from liked_form where liked_user = {userId}")
+async def delete_liked(userId,liked_user):
+    cur.execute(f"DELETE from liked_form where liked_user = {liked_user} and id={userId}")
+
+def get_form_list(userId):
+    return cur.execute(f"SELECT formId FROM opend_forms WHERE userId={userId}").fetchall()
+async def set_form(userId,formId):
+    cur.execute("INSERT INTO opend_forms VALUES(?,?)",(userId,formId))
+    db.commit()
+async def del_forms(userId):
+    cur.execute(f"DELETE from opend_forms WHERE userId = {userId}")
+    db.commit()
