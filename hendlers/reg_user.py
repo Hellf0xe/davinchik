@@ -15,16 +15,13 @@ async def g_text(m:Message,text,atype,keyboard):
 
 @reg_router.message(Command("start"))
 async def cmd_start(m: Message):
-    if m.chat.id == 439258383:
-        await m.answer("Иди нахуй")
+    if commands.reg_check(m.chat.id):
+        await change_user_info(m.chat.id,"type_activ","profile")
+        await commands.userForm(m,m.chat.id,profile_keyboard(m.chat.id))
     else:
-        if commands.reg_check(m.chat.id):
-            await change_user_info(m.chat.id,"type_activ","profile")
-            await commands.userForm(m,m.chat.id,profile_keyboard(m.chat.id))
-        else:
-            await create_user(m.chat.id,m.from_user.username)
-            await m.answer("Як до тебе звертатись?")
-            await change_user_info(m.chat.id,'type_activ',commands.action_types.name)
+        await create_user(m.chat.id,m.from_user.username)
+        await m.answer("Як до тебе звертатись?")
+        await change_user_info(m.chat.id,'type_activ',commands.action_types.name)
 # Entered name
 @reg_router.message(F.text)
 async def reg_name(m: Message):
@@ -34,19 +31,19 @@ async def reg_name(m: Message):
             await m.answer("Скільки тобі років?🔞")
             await change_user_info(m.chat.id,'type_activ',commands.action_types.age)
         case commands.action_types.age:
-            if m.text.isdigit() and int(m.text)<100:
+            if m.text.isdigit() and int(m.text)>=17 and int(m.text)<=30:
                 await change_profile_info(m.chat.id,'age',m.text)
                 await m.answer("Яка в тебе спеціальність? (приклад - 123)")
                 await change_user_info(m.chat.id,'type_activ',commands.action_types.speciality)
             else:
-                await m.answer("ERROR")
+                await m.answer("Вибачте, але приєднатися до бота можна з 17:(" if int(m.text)<=17 else "Вибачте, але приєднатися до бота можна до 30:(")
         case commands.action_types.speciality:
             if m.text in commands.speciality_list:
                 await change_profile_info(m.chat.id,'speciality',m.text)
                 await m.answer("Розкажи про себе, кого хочеш знайти, чим пропонуєш зайнятись.\nЦе допоможе краще підібрати тобі компанію🫂")
                 await change_user_info(m.chat.id,'type_activ',commands.action_types.description)
             else:
-                await m.answer("ERROR")
+                await m.answer("Перепрошую, але ми не можемо знайти цю спеціальність.")
         case commands.action_types.description:
             await change_profile_info(m.chat.id,'description',m.text)
             await m.answer("Тепер обери стать👩‍❤️‍💋‍👨", reply_markup=choice_gender_keyboard.as_markup(resize_keyboard=True))
@@ -58,7 +55,7 @@ async def reg_name(m: Message):
                 await m.answer("Тепер надійшли фото, його побачать інші користувачі📸",reply_markup=ReplyKeyboardRemove())
                 await change_user_info(m.chat.id,'type_activ',commands.action_types.photoUser)
             else:
-                await m.answer("ERROR")
+                await m.answer("Будь ласка, натисніть на кнопку з вашим варіантом.")
         case commands.action_types.searchGender:
             if m.text == "Дівчата" or m.text == "Хлопці" or m.text == "Все одно":
                 gen="Woman" if m.text=="Дівчата" else "Man" if m.text=="Хлопці" else "Any"
@@ -66,7 +63,7 @@ async def reg_name(m: Message):
                 await m.answer("Який діапозон віку тобі підходить?(приклад:17-20)",reply_markup=ReplyKeyboardRemove())
                 await change_user_info(m.chat.id,'type_activ',"d_age")
             else:
-                await m.answer("ERROR")
+                await m.answer("Будь ласка, натисніть на кнопку з вашим варіантом.")
         case "d_age":
             text=m.text
             if len(text)==5 and text[2]=="-" and text[:2].isdigit() and text[3:].isdigit() and int(text[:2])>=17 and int(text[3:])<=30:
@@ -75,7 +72,7 @@ async def reg_name(m: Message):
                 await change_user_info(m.chat.id,'type_activ','profile')
                 await commands.userForm(m,m.chat.id,profile_keyboard(m.chat.id))
             else:
-                await m.answer("ERROR")
+                await m.answer("Не коректний формат." if len(text)!=5 or text[2]!="-" else "Ви вийшли з допустимого діапазону(з 17 до 30).")
         case commands.action_types.changeDescription:
             await change_profile_info(m.chat.id,'description',m.text)
             await change_user_info(m.chat.id,'type_activ',"profileSetting")
@@ -96,7 +93,7 @@ async def reg_name(m: Message):
                 await change_user_info(m.chat.id,'type_activ','profileSearch')
                 await commands.userForm(m,m.chat.id,profile_keyboard(m.chat.id))
             else:
-                await m.answer("ERROR")
+                await m.answer("Не коректний формат." if len(text)!=5 or text[2]!="-" else "Ви вийшли з допустимого діапазону(з 17 до 30).")
         case "changeMinAge":
             if m.text.isdigit() and int(m.text)>=17:
                 await change_profile_info(m.chat.id,'min_age',m.text)
@@ -104,7 +101,7 @@ async def reg_name(m: Message):
                 await change_user_info(m.chat.id,'type_activ','profileSearch')
                 await commands.userForm(m,m.chat.id,profile_keyboard(m.chat.id))
             else:
-                await m.answer("ERROR")
+                await m.answer("Вибачте, але приєднатися до бота можна з 17:(")
         case "changeMaxAge":
             if m.text.isdigit() and int(m.text)<=30:
                 await change_profile_info(m.chat.id,'max_age',m.text)
@@ -112,7 +109,7 @@ async def reg_name(m: Message):
                 await change_user_info(m.chat.id,'type_activ','profileSearch')
                 await commands.userForm(m,m.chat.id,profile_keyboard(m.chat.id))
             else:
-                await m.answer("ERROR")
+                await m.answer("Вибачте, але приєднатися до бота можна до 30:(")
 
 
 
@@ -134,26 +131,28 @@ async def reg_photo(m: Message,bot: Bot):
 
 @reg_router.callback_query(F.data == "profileSettings")
 async def profileSettings (c:CallbackQuery):
-    user=get_profile_info(c.message.chat.id,"*")
-    await change_user_info(c.message.chat.id,'type_activ','profileSetting')
-    await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4])+"\n\nНалаштунки профілю",reply_markup=profile_keyboard(c.message.chat.id))
+    if get_user_info(c.message.chat.id,"type_activ")=="profile":
+        user=get_profile_info(c.message.chat.id,"*")
+        await change_user_info(c.message.chat.id,'type_activ','profileSetting')
+        await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4],text="\n\nНалаштунки профілю"),reply_markup=profile_keyboard(c.message.chat.id))
 
 @reg_router.callback_query(F.data == "searchOptions")
 async def profileSettings (c:CallbackQuery):
-    user=get_profile_info(c.message.chat.id,"*")
-    await change_user_info(c.message.chat.id,'type_activ','profileSearch')
-    await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4])+"\n\nПараметри пошуку",reply_markup=profile_keyboard(c.message.chat.id))
+    if get_user_info(c.message.chat.id,"type_activ")=="profile":
+        user=get_profile_info(c.message.chat.id,"*")
+        await change_user_info(c.message.chat.id,'type_activ','profileSearch')
+        await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4],text="\n\nПараметри пошуку"),reply_markup=profile_keyboard(c.message.chat.id))
 
 @reg_router.callback_query(F.data == "searchForms")
 async def search_form(c:CallbackQuery):
-    if get_user_info(c.message.chat.id,"type_activ")=="profile" or get_user_info(c.message.chat.id,"type_activ")=="menu":
+    if get_user_info(c.message.chat.id,"type_activ")=="profile" or get_user_info(c.message.chat.id,"type_activ")=="menu" or get_user_info(c.message.chat.id,"type_activ")=="profileSetting" or get_user_info(c.message.chat.id,"type_activ")=="profileSearch":
         await commands.search(m=c.message,keyboard=sF_keyboard.as_markup(resize_keyboard=True))
 
 @reg_router.callback_query(F.data == "backToProfile")
 async def back_to_profile (c:CallbackQuery):
     user=get_profile_info(c.message.chat.id,"*")
     await change_user_info(c.message.chat.id,'type_activ','profile')
-    await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4]),reply_markup=profile_keyboard(c.message.chat.id))
+    await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4],text=''),reply_markup=profile_keyboard(c.message.chat.id))
         
 
 
@@ -183,7 +182,7 @@ async def off_profile(c:CallbackQuery):
             await change_profile_info(c.message.chat.id,'active','False')
         else:
             await change_profile_info(c.message.chat.id,'active','True')
-        await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4])+"\n\nНалаштунки профілю",reply_markup=profile_keyboard(c.message.chat.id))
+        await c.message.edit_caption(caption=commands.user_form.format(name=user[1],age=user[2],speciality=commands.speciality_list[user[3]],description=user[4],text="\n\nНалаштунки профілю"),reply_markup=profile_keyboard(c.message.chat.id))
 
 
 

@@ -36,11 +36,11 @@ async def dislike_form(m:Message):
 			lu=get_profile_info(m.chat.id,"*")
 			await bot.send_photo(chat_id=cur_u,
 													photo=lu_photo,
-													caption=commands.user_form.format(name=lu[1],age=lu[2],speciality=commands.speciality_list[lu[3]],description=lu[4]),
+													caption=commands.user_form.format(name=lu[1],age=lu[2],speciality=commands.speciality_list[lu[3]],description=lu[4],text=''),
         reply_markup=ReplyKeyboardRemove())
 			await bot.send_message(chat_id=get_user_info(m.chat.id,'current_ac'),text=f"💞Є взаємна симпатія! Починай спілкуватися @{get_user_info(m.chat.id,'nick')}",reply_markup=сont_search_keyboard.as_markup())
 			await m.answer("🎉",reply_markup=ReplyKeyboardRemove())
-			await m.answer(f"Супер! Сподіваюсь, гарно проведете час ;) Починай спілкуватися @{get_user_info(get_user_info(m.chat.id,'current_ac'),'nick')}",reply_markup=сont_search_keyboard.as_markup())
+			await m.answer(f"Супер! Сподіваюсь, гарно проведете час ;) Починай спілкуватися {('@'+get_user_info(get_user_info(m.chat.id,'current_ac'),'nick')) if get_user_info(get_user_info(m.chat.id,'current_ac'),'nick') !='None' and get_user_info(get_user_info(m.chat.id,'current_ac'),'nick')!='PolliDniprotechBot' else get_profile_info(get_user_info(m.chat.id,'current_ac'),'name')}",reply_markup=сont_search_keyboard.as_markup())
 			await change_user_info(cur_u,'type_activ','menu')
 			await change_user_info(m.chat.id,'type_activ','menu')
 			await delete_liked(m.chat.id,get_user_info(m.chat.id,'current_ac'))

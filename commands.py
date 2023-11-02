@@ -24,15 +24,16 @@ class action_types:
 with open("./data/specialties.json", "r", encoding="UTF-8") as f:
     speciality_list = json.load(f)
 
-user_form="{name}, {age}, {speciality} - {description}"
+user_form="{name}, {age}, {speciality} - {description}{text}"
 
 
 async def userForm(m:Message,userId,keyboard):
     user_photo = FSInputFile(f"userPhoto/{userId}.jpg")
     user=get_profile_info(userId,"*")
+    text="\n\nНалаштунки профілю" if get_user_info(m.chat.id,"type_activ")=="profileSetting" else "\n\nПараметри пошуку" if get_user_info(m.chat.id,"type_activ")=="profileSearch" else ""
     await m.answer_photo(
         user_photo,
-        caption=user_form.format(name=user[1],age=user[2],speciality=speciality_list[user[3]],description=user[4]),
+        caption=user_form.format(name=user[1],age=user[2],speciality=speciality_list[user[3]],description=user[4],text=text),
         reply_markup=keyboard
     )
 async def search(m:Message,keyboard):
@@ -53,7 +54,7 @@ async def search(m:Message,keyboard):
     else:
         if get_user_forms(m.chat.id)!=[] and users==[]:
             if get_user_info(m.chat.id,'start_timer')=="False": await change_user_info(m.chat.id,'start_timer','True')
-            mess=await m.answer("Sleep",reply_markup=ReplyKeyboardRemove())
+            mess=await m.answer("Ви подивилися усі доступні анкети. Ми повідомимо коли ви зможете дивитися анкети знову",reply_markup=ReplyKeyboardRemove())
             if get_user_info(m.chat.id,"type_activ")=='search':
                 await change_user_info(m.chat.id,"type_activ","profile")
                 await userForm(m,m.chat.id,profile_keyboard(m.chat.id))

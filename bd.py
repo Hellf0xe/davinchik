@@ -48,8 +48,13 @@ async def change_profile_info(userId, name_info, value):
     db.commit()
 
 def get_user_forms(userId):
-    age=get_profile_info(userId,"age")
-    return cur.execute(f"SELECT * FROM profile WHERE id!=? AND active='True' AND photo!='none'", (userId,)).fetchall()
+    min_age=get_profile_info(userId,"min_age")
+    max_age=get_profile_info(userId,"max_age")
+    gender=get_profile_info(userId,'search_gender')
+    if gender=="Any":
+        return cur.execute(f"SELECT * FROM profile WHERE id!=? AND active='True' AND age>={min_age} AND age<={max_age} AND photo!='none'", (userId,)).fetchall()
+    else:
+        return cur.execute(f"SELECT * FROM profile WHERE id!=? AND active='True' AND age>={min_age} AND age<={max_age} AND gender='{gender}' AND photo!='none'", (userId,)).fetchall()
 
 async def delete_user(userId):
     cur.execute(f"DELETE from profile where id = {userId}")
